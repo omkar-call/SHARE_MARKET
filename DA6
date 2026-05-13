@@ -1,39 +1,39 @@
 import pandas as pd
 import numpy as np
 
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
 # Load dataset
-data = pd.read_csv(r"C:\Users\Satish\OneDrive\Documents\practise dataset\Social_Network_Ads.csv")
+iris = load_iris()
+
+# Create dataframe
+data = pd.DataFrame(
+    iris.data,
+    columns=iris.feature_names
+)
+
+# Add target
+data['target'] = iris.target
 
 print(data.head())
 
 # Features and target
-X = data[['Age', 'EstimatedSalary']]
-y = data['Purchased']
+X = iris.data
+y = iris.target
 
 # Split dataset
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
-    test_size=0.25,
-    random_state=0
+    test_size=0.2,
+    random_state=42
 )
 
-# Feature scaling
-sc = StandardScaler()
-
-X_train = sc.fit_transform(X_train)
-X_test = sc.transform(X_test)
-
-# Logistic Regression model
-model = LogisticRegression()
+# Create model
+model = GaussianNB()
 
 # Train model
 model.fit(X_train, y_train)
@@ -41,26 +41,18 @@ model.fit(X_train, y_train)
 # Prediction
 y_pred = model.predict(X_test)
 
-# Confusion Matrix
+# Confusion matrix
 cm = confusion_matrix(y_test, y_pred)
 
 print("\nConfusion Matrix:")
 print(cm)
-
-# TP, FP, TN, FN
-TN, FP, FN, TP = cm.ravel()
-
-print("\nTrue Positive:", TP)
-print("False Positive:", FP)
-print("True Negative:", TN)
-print("False Negative:", FN)
 
 # Accuracy
 accuracy = accuracy_score(y_test, y_pred)
 
 print("\nAccuracy:", accuracy)
 
-# Error Rate
+# Error rate
 error_rate = 1 - accuracy
 
 print("Error Rate:", error_rate)
@@ -68,3 +60,13 @@ print("Error Rate:", error_rate)
 # Precision, Recall, F1-score
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
+tn, fp, fn, tp = confusion_matrix(
+    y_test,
+    y_pred,
+    labels=[0,1]
+).ravel()
+
+print("TP:", tp)
+print("FP:", fp)
+print("TN:", tn)
+print("FN:", fn)
