@@ -1,43 +1,54 @@
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-...
 
+# Load dataset
+data = pd.read_csv(r"C:\Users\Satish\OneDrive\Documents\practise dataset\Titanic-Dataset.csv")
 
-df = pd.read_csv('DSBDA_sample_file.csv', encoding='latin1')
+# Display first 5 rows
+print("First 5 Rows")
+print(data.head())
 
-df.head()
-...
+# Missing values
+print("\nMissing Values")
+print(data.isnull().sum())
 
-print(df.isnull().sum())
+# Statistical summary
+print("\nStatistical Summary")
+print(data.describe())
 
-print(df.describe())
+# Dataset info
+print("\nDataset Information")
+print(data.info())
 
-print("Rows:", df.shape[0])
-print("Columns:", df.shape[1])
-...
-columns_to_convert = ['Survived', 'Pclass', 'Sex', 'Embarked']
+# Dataset dimensions
+print("\nDataset Shape")
+print(data.shape)
 
-for col in columns_to_convert:
-    if col in df.columns:
-        df[col] = df[col].astype('category')
-    else:
-        print(f"Column '{col}' not found, skipping conversion.")
+# Data types
+print("\nData Types")
+print(data.dtypes)
 
-print(df.dtypes)
-...
-columns_to_encode = ['Sex', 'Embarked', 'Pclass']
+# Convert Survived to category
+data['Survived'] = data['Survived'].astype('category')
 
-existing_columns = [col for col in columns_to_encode if col in df.columns]
+# Convert Sex column into numeric
+data['Sex'] = data['Sex'].map({
+    'male': 0,
+    'female': 1
+})
 
-if existing_columns:
-    df_encoded = pd.get_dummies(df, columns=existing_columns)
-    print(f"Encoded columns: {existing_columns}")
-else:
-    df_encoded = df.copy()
-    print("None of the requested columns were found. Returned a copy of original dataframe.")
+# One-hot encoding
+data = pd.get_dummies(
+    data,
+    columns=['Embarked']
+)
 
-df_encoded.head()
-...
+# Final dataset
+print("\nProcessed Dataset")
+print(data.head())
+
+# Final data types
+print("\nUpdated Data Types")
+print(data.dtypes)
